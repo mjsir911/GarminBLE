@@ -159,9 +159,15 @@ vivofit_table:add(0x1388, vivofit_ack)
 --
 -- Begin System Message 0x13a6
 --
-vivofit_system_event = Proto("vivofit.system_event", "Vivofit System Event Message")
+vivofit_system_event = Proto("vivofit.system_event", "Vivofit System Event")
+system_event_type = ProtoField.uint8("vivofit.system_event.type", "Type")
+vivofit_system_event.fields = {
+	system_event_type,
+}
 function vivofit_system_event.dissector(buffer, pinfo, root)
-	-- print("vivofit_system_event: " .. tostring(pinfo.number))
+	local tree = root:add(vivofit_system_event, buffer())
+	tree:add_le(system_event_type, buffer(0, 1))
+	pinfo.cols.info = "System Event"
 end
 vivofit_table:add(0x13a6, vivofit_system_event)
 --
